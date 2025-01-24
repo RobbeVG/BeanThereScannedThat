@@ -14,15 +14,6 @@ def load_api(file_path):
 API_KEYS_FILE_PATH = './.venv/API.json'
 API_KEYS = load_api(API_KEYS_FILE_PATH)
 
-def print_results(results):
-    print("Image analysis results:")
-    print(" Read:")
-    if results.read is not None:
-        for line in results.read.blocks[0].lines:
-            print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
-            for word in line.words:
-                print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
-
 def extract_text_from_image(image_path):
     """
     Extracts text from the given image using Azure Computer Vision OCR.
@@ -42,26 +33,45 @@ def extract_text_from_image(image_path):
 
         results = client.analyze(
             image_data, 
-            visual_features=[VisualFeatures.READ])
+            visual_features=[VisualFeatures.CAPTION, VisualFeatures.READ])
 
+        def extract_text_from_(result):
+            """
+            Extracts the query from the OCR results.
+            """
+            query = []
+            for block in result["readResult"]["blocks"]:
+                for line in block["lines"]:
+                    text = line.text.lower()
+                    query.append(text) 
+            return query
         
-
-        return results 
+        return extract_text_from_(results) 
     except Exception as e:
         print(f"Error during OCR: {e}")
         return None
 
-if __name__ == "__main__":
-    directory = "./Tests/Images"
-    print("Loaded API Keys:", API_KEYS)
 
-    results = extract_text_from_image("Tests\Images\coffee_bag_lacabra.jpg")
-    if results:
-        print_results(results)
+# Example usage:
+if __name__ == "__main__":
+    directory = "./Tests"
 
     # Test the OCR module
-    # for filename in os.listdir(directory):
-    #     if filename.endswith(".jpg" or ".png" or ".jpeg"):
-    #         test_image = filename
-    #         extract_text_from_image(os.path.join(directory, test_image))
+    # results = extract_text_from_image("Tests\Images\coffee_bag_lacabra.jpg")
+    # if results:
+    #     print(results)
+
+    # Test the OCR module > Save responses to JSON files
+    imagedir = directory + "/Images"
+    for filename in os.listdir(imagedir):
+        if filename.endswith(".jpg" or ".png" or ".jpeg"):
+            print(f"Processing image: {filename}")
+            results = extract_text_from_image(os.path.join(imagedir, filename))
+            if results:
+                responsedir = directory + "/Responses"
+                with open(os.path.join(responsedir, os.path.splitext(filename)[0] + ".json"), "w") as outfile:
+                    json.dump(results, outfile, ensure_ascii=False, indent=4)
+                print("Results written to response file.")
+            else:
+                print("No results returned.")
     print("----------------EXIT-----------------")
