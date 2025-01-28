@@ -2,20 +2,21 @@
     "productParameters": {
         "general": {
             "name": {
-                "en": "Name",
-                "nl": "Naam"
+                "regex": "^[a-zA-Z0-9 ]+$",
+                "en": ["Name"],
+                "nl": ["Naam"]
             },
             "variety": {
                 "en": ["Variety", "Varietal"],
-                "nl": "Variëteit"
+                "nl": ["Variëteit"]
             },
             "origin": {
                 "en": ["Origin", "Country"],
                 "nl": ["Herkomst", "Land", "Oorsprong"]
             },
             "region": {
-                "en": "Region",
-                "nl": "Regio"
+                "en": ["Region"],
+                "nl": ["Regio"]
             },
             "tastingNotes": {
                 "en": ["Tasting Notes", "Taste", "Flavor", "Flavour", "Profile", "Exression"],
@@ -23,7 +24,7 @@
             },
             "altitude": {
                 "en": ["Altitude", "elevation"],
-                "nl": "Hoogte"
+                "nl": ["Hoogte"]
             },
             "process": {
                 "en": ["Processing Method", "Process"],
@@ -36,16 +37,17 @@
         },
         "bagSpecific": {
             "roastDate": {
+                "regex": "^\\D*((\\d{1,2})\\D(\\d{1,2})\\D(2?\\d+))$",
                 "en": ["Roast Date", "Roasted On"],
-                "nl": "Branddatum"
+                "nl": ["Branddatum"]
             },
             "weight": {
                 "en": ["Weight", "Net Weight"],
                 "nl": ["Gewicht", "Netto Gewicht"]
             },
             "expirationDate": {
-                "abriviation": "BB",
-                "en": ["Expiration Date", "Best Before"],
+                "regex": "^\\D*((\\d{1,2})\\D(\\d{1,2})\\D(2?\\d+))$",
+                "en": ["Expiration Date", "Best Before", "BB"],
                 "nl": ["Vervaldatum", "Tenminste Houdbaar Tot"]
             }
         }

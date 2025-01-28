@@ -1,0 +1,13 @@
+{
+    "python.testing.pytestEnabled": true,
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
+    "python.experiments.optInto": [
+        "pythonTestAdapter"
+    ],
+    "python.testing.pytestArgs": [
+        // "-p no:warnings",
+        "--cov=src",
+        "--cov-branch", 
+        "Tests"
+    ]
+}
