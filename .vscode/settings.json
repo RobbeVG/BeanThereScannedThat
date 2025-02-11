@@ -7,7 +7,9 @@
     "python.testing.pytestArgs": [
         // "-p no:warnings",
         "--cov=src",
-        "--cov-branch", 
-        "Tests"
+        "--cov-append",
+        "--cov-branch",
+        "Tests",
+        "-s"
     ]
 }

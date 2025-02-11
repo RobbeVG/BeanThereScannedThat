@@ -1,0 +1,115 @@
+{
+    "HTMLclassNamesRegexes": {
+        "title": "(product|title|name)[-_\\s]*?(product|title|name)(\\w+)?",
+        "description": "(product|description|details)[-_\\s]*?(product|description|details)(\\w+)?"
+    },
+
+    "dataFields": {
+        "name": {
+            "sources": ["title", "description", "text"],
+            "patterns": {
+                "regex": "^[a-zA-Z0-9]+$",
+                "text": {
+                    "en": ["Name"],
+                    "nl": ["Naam"]
+                }
+            }
+        },
+        "variety": {
+            "sources": ["description", "text"],
+            "patterns": {
+                "text": {
+                    "en": ["Variety", "Varietal", "Varietals"],
+                    "nl": ["Variëteit"]
+                }
+            }
+        },
+        "origin": {
+            "sources": ["description", "text"],
+            "patterns":{
+                "text": {
+                    "en": ["Origin", "Country"],
+                    "nl": ["Herkomst", "Land", "Oorsprong"]
+                }
+            }
+        },
+        "region": {
+            "sources": ["description", "text"],
+            "patterns": {
+                "text": {
+                    "en": ["Region"],
+                    "nl": ["Regio"]
+                }
+            }
+        },
+        "tastingNotes": {
+            "sources": ["description", "text"],
+            "patterns": {
+                "text": {
+                    "en": ["Tasting Notes", "Taste", "Flavor", "Flavour", "Profile", "Exression"],
+                    "nl": ["Smaaktonen", "Smaak"]
+                }
+            }
+        },
+        "altitude": {
+            "sources": ["description", "text"],
+            "patterns": {
+                "text": {
+                    "en": ["Altitude", "Elevation"],
+                    "nl": ["Hoogte"]
+                }
+            }
+        },
+        "process": {
+            "sources": ["description", "text"],
+            "patterns": {
+                "text":{
+                    "en": ["Processing Method", "Process"],
+                    "nl": ["Verwerkingsmethode"]
+                }
+            }
+        },
+        "producer": {
+            "sources": ["description", "text"],
+            "patterns": {
+                "text":{
+                    "en": ["Producer", "Farm", "Estate"],
+                    "nl": ["Producent", "Boerderij", "Landgoed"]
+                }
+            }
+        }
+    },
+    "dataFields_BagSpecific": {
+        "roastDate": {
+            "sources": ["text"],
+            "patterns": {
+                "text":{
+                    "en": ["Roast Date", "Roasted On"],
+                    "nl": ["Branddatum"]
+                },
+                "regex": "^\\D*((\\d{1,2})\\D(\\d{1,2})\\D(2?\\d+))$"
+            }
+        },
+        "weight": {
+            "sources": ["text"],
+            "patterns": {
+                "text": {
+                    "en": ["Weight", "Net Weight"],
+                    "nl": ["Gewicht", "Netto Gewicht"]
+                },
+                "type": "number"
+            }
+        },
+        "expirationDate": {
+            "sources": ["text"],
+            "patterns": {
+                "text":{
+                    "en": ["Expiration Date", "Best Before", "BB"],
+                    "nl": ["Vervaldatum", "Tenminste Houdbaar Tot"]
+                },
+                "type": "date",
+                "regex": "^\\D*((\\d{1,2})\\D(\\d{1,2})\\D(2?\\d+))$"
+            }
+        }
+    }
+}

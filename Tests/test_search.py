@@ -1,11 +1,17 @@
 import pytest
-from src.search_module import search_google
 
-@pytest.mark.parametrize("query, expected", [
-    ("test", ["test result 1", "test result 2"]),
-    ("example", ["example result 1", "example result 2"]),
-    ("sample", ["sample result 1", "sample result 2"]),
+from src.search_module import search_coffee_parameters_online
+
+@pytest.mark.parametrize("query", [
+    (["Andy", "Colombia", "Filter", "Jairo Arcila"]),
+    (["Cross Roast", "finca el recuerdo"])
 ])
 
-def test_search_function(query, expected):
-    assert search_google(query) == expected
+def test_search_function(query):
+    print('\n' + query[0])
+    results = search_coffee_parameters_online(query)
+
+    for i, result in enumerate(results, 1):
+        print(f"Result {i}: {result}")
+    assert i == 3
+
