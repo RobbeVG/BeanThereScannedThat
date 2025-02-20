@@ -145,5 +145,3 @@ if __name__ == "__main__":
     results = search_coffee_parameters_online(query)
     for url, result in results.items():
         print(f"Extracted from: {url} \n {result}")
-
-    
