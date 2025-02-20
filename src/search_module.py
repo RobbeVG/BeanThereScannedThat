@@ -1,4 +1,4 @@
-from googlesearch import search
+from googlesearch import search, SearchResult
 from bs4 import BeautifulSoup
 import requests, re, json
 from typing import Any, Dict
@@ -55,6 +55,16 @@ def concatTextLanguages(data_fields: dict, languages = ['en', 'nl']) -> None:
                 combined_keywords.extend(details['patterns']['text'][lang])
         data_fields[field]['patterns']['text'] = combined_keywords
 
+def extract_field_text_of_html(text: str, field: str | list[str] = None) -> str:
+    extracted_text = re.sub(r'<[^>]+>', '', text)  # Remove HTML tags
+    if field:
+        if type(field) == list:
+            for text in field:
+                extracted_text = re.sub(re.escape(text) + r'\W+', '', extracted_text, flags=re.IGNORECASE) # Remove field parameter until text
+        else:
+            extracted_text = re.sub(re.escape(field) + r'\W+', '', extracted_text, flags=re.IGNORECASE) # Remove field parameter until text
+    return extracted_text
+
 def search_coffee_parameters_online(query: str, amount_hits: int = 3) -> CoffeeData:
     # Get Parameter list
     with open('src/parameters.json', 'r') as file:
@@ -66,7 +76,9 @@ def search_coffee_parameters_online(query: str, amount_hits: int = 3) -> CoffeeD
 
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'}
     google_search_results = search(query, num_results=amount_hits)
-        
+
+    scraping_results = {}
+
     for url in google_search_results:
         print(f"Extracting data from {url}")
 
@@ -84,7 +96,7 @@ def search_coffee_parameters_online(query: str, amount_hits: int = 3) -> CoffeeD
 
         coffee_data = CoffeeData({})
 
-        for field, details in data_fields.items():
+        for field_name, details in data_fields.items():
             keywords = details['patterns']['text']
             found = False
             for source in details['sources']:
@@ -92,8 +104,7 @@ def search_coffee_parameters_online(query: str, amount_hits: int = 3) -> CoffeeD
                 if source in specific_tags:
                     for tag in specific_tags[source]:
                         if contains_keywords(tag, keywords):
-                            extracted_text = tag.get_text().strip()
-                            extracted_text = re.sub(r'<[^>]+>', '', extracted_text)  # Remove HTML tags
+                            extracted_text = extract_field_text_of_html(tag.get_text().strip(), field_name)
                             # if 'regex' in details['patterns']:
                             #     if re.match(details['patterns']['regex'], extracted_text):
                             #         coffee_data.variables[field] = extracted_text
@@ -107,32 +118,32 @@ def search_coffee_parameters_online(query: str, amount_hits: int = 3) -> CoffeeD
                                 found = True
                                 break
                 elif source == "text":
-                    matches = soup.find_all(string=re.compile(r'\b' + '|'.join(map(re.escape, keywords)) + r'\b', re.IGNORECASE))
-                    for match in matches:
-                        extracted_text = match.strip()
-                        extracted_text = re.sub(r'<[^>]+>', '', extracted_text)  # Remove HTML tags
-                        # if 'regex' in details['patterns']:
-                        #     if re.match(details['patterns']['regex'], extracted_text):
-                        #         coffee_data.variables[field] = extracted_text
-                        #         found = True
-                        #         break
-                        # else:
+                    match = soup.find(string=re.compile(r'\b' + '|'.join(map(re.escape, keywords)) + r'\b', re.IGNORECASE))
+                    if match:
+                        extracted_text = extract_field_text_of_html(match.strip(), keywords)
+                    # if 'regex' in details['patterns']:
+                    #     if re.match(details['patterns']['regex'], extracted_text):
+                    #         coffee_data.variables[field] = extracted_text
+                    #         found = True
+                    #         break
+                    # else:
                         found = True
-                        break
                 else:
                     print("No source available to search for parameter")
                 
                 if found:
-                    coffee_data.variables[field] = extracted_text.strip()
+                    coffee_data.variables[field_name] = extracted_text.strip()
 
                     break
-        print(coffee_data)
+        scraping_results[url] = coffee_data
 
-    return coffee_data
+    return scraping_results
 
 # Example usage
 if __name__ == "__main__":
     query = "Andy coffee filter Colombia Jairo Arcila"
-    search_coffee_parameters_online(query)
+    results = search_coffee_parameters_online(query)
+    for url, result in results.items():
+        print(f"Extracted from: {url} \n {result}")
 
     
